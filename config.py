@@ -8,11 +8,11 @@ class Config:
     """Base configuration."""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-should-really-change-this'
     # Configure MySQL connection using provided details
-    MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '1202')
-    MYSQL_HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
+    MYSQL_USER = os.environ.get('MYSQL_USER', 'alihasanovm_alien')
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '$2y5t4E4f')
+    MYSQL_HOST = os.environ.get('MYSQL_HOST', 'alihasanovm.helioho.st')
     MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
-    MYSQL_DB = os.environ.get('MYSQL_DB', 'iris_db')
+    MYSQL_DB = os.environ.get('MYSQL_DB', 'alihasanovm_iris_db')
     # Construct the URI for SQLAlchemy, using pymysql driver
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}'
