@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
+{% block title %}{{ title }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">{{ title }}</h2>
+
+                {# Display flashed messages #}
+                {% include '_flashes.html' %}
+
+                <form method="POST" action="{{ url_for('hr.create_vacancy') }}">
+                    {{ form.hidden_tag() }} {# CSRF token #}
+
+                    {{ wtf.render_field(form.title) }}
+                    {{ wtf.render_field(form.description) }}
+
+                    <hr>
+                    <h5 class="mb-3">Scoring Weights</h5>
+                    <p class="text-muted small">Define the importance of each section (weights must sum exactly to 1.0).</p>
+                    <div class="row g-3"> {# Use g-3 for spacing #}
+                        <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_relevant_experience_years) }}
+                        </div>
+                         <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_technical_skills_match) }}
+                        </div>
+                         <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_education_level_relevance) }}
+                        </div>
+                         <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_project_portfolio_quality) }}
+                        </div>
+                         <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_keyword_alignment) }}
+                        </div>
+                         <div class="col-md-4">
+                            {{ wtf.render_field(form.weight_communication_clarity) }}
+                        </div>
+                    </div>
+                    {# Display weight sum error (now attached to first weight field) #}
+                    {% if form.weight_relevant_experience_years.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {% for error in form.weight_relevant_experience_years.errors %}
+                                {{ error }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="d-grid mt-4">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('hr.dashboard') }}" class="btn btn-outline-secondary mt-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

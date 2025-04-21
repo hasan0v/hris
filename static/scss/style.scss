@@ -1,0 +1,109 @@
+// Import Bootstrap functions and variables if needed for customization later
+// @import "../../../../node_modules/bootstrap/scss/functions";
+// @import "../../../../node_modules/bootstrap/scss/variables";
+
+// Define custom variables (e.g., PRD colors)
+$gradient-start: #1E1BFE;
+$gradient-end: #C75CFF;
+$cyan-accent: #0dcaf0; // Bootstrap's cyan
+$navbar-logo-height: 30px; // Define logo height
+
+// Use a modern, clean font stack (similar to Bootstrap 5 default)
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+/* Basic gradient background as per PRD */
+body {
+    font-family: $font-family-sans-serif; // Apply the modern font stack
+    background: linear-gradient(to right, $gradient-start, $gradient-end);
+    min-height: 100vh; /* Ensure gradient covers full height */
+    color: #333; /* Default text color for contrast on cards */
+    display: flex; /* Used with flex-column to push footer down */
+    flex-direction: column; /* Stack elements vertically */
+}
+
+/* Ensure main content area takes available space */
+main {
+    flex: 1; /* Allows main to grow and push footer down */
+}
+
+/* Style for white cards */
+.card {
+    background-color: #ffffff;
+    // Add box-shadow for a subtle lift?
+    // box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Cyan hover accents */
+a:hover {
+    color: $cyan-accent;
+    opacity: 0.85;
+}
+
+.btn-primary {
+    // Standard primary button style (can customize later)
+    &:hover {
+        background-color: #0b5ed7; // Default darker blue
+        border-color: #0a58ca;
+        opacity: 0.9;
+        // Or use cyan accent:
+        // background-color: $cyan-accent;
+        // border-color: $cyan-accent;
+        // color: white;
+    }
+}
+
+
+/* Ensure footer stays at the bottom */
+footer {
+    flex-shrink: 0; /* Prevent footer from shrinking */
+    // background-color: #f8f9fa !important; /* Ensure light background */
+}
+
+// Add more custom styles or overrides here
+.text-white {
+    color: #fff !important; // Ensure white text overrides defaults on gradient
+}
+
+.vacancy-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+}
+
+.hr-vacancy-card {
+    // Similar hover effect, maybe slightly different background or border on hover?
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+     &:hover {
+        transform: translateY(-3px); // Slightly less lift than index cards
+        box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.12);
+    }
+}
+
+// Navbar logo styling
+.navbar-logo {
+    height: $navbar-logo-height;
+    width: auto; // Maintain aspect ratio
+}
+
+// Loading Overlay Styles
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); // Semi-transparent black background
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1060; // Higher than navbar (usually 1030) but below modals (usually 1050/1055)
+  backdrop-filter: blur(3px); // Apply blur effect
+  -webkit-backdrop-filter: blur(3px); // For Safari
+
+  .spinner-border {
+    width: 3rem; // Make spinner larger
+    height: 3rem;
+  }
+}

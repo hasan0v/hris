@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ title }}</h1>
+        <a href="{{ url_for('hr.create_vacancy') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Create New Vacancy
+        </a>
+    </div>
+
+    {# Display flashed messages #}
+    {% include '_flashes.html' %}
+
+    {% if vacancies.items %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for vacancy in vacancies.items %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm hr-vacancy-card"> {# Added hr-vacancy-card class #}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ vacancy.title }}</h5>
+                            <p class="card-text text-muted small flex-grow-1">
+                                Created: {{ vacancy.created_at.strftime('%Y-%m-%d %H:%M') }} <br>
+                                {# Add applicant count later #}
+                                {# Applicants: {{ vacancy.applications.count() }} #}
+                            </p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center"> {# Action buttons at bottom #}
+                                <a href="{{ url_for('hr.view_applicants', vacancy_id=vacancy.id) }}" class="btn btn-sm btn-primary"><i class="bi bi-people-fill"></i> View Applicants</a>
+                                <div>
+                                    {# Edit Button (Placeholder) #}
+                                    <button class="btn btn-sm btn-outline-secondary disabled" title="Edit (coming soon)"><i class="bi bi-pencil-square"></i></button>
+                                    {# Delete Button/Form #}
+                                    <form method="POST" action="{{ url_for('hr.delete_vacancy', vacancy_id=vacancy.id) }}" onsubmit="return confirm('Are you sure? This will also delete all applications for this vacancy.');" class="d-inline ms-1">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Vacancy"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+         {# Pagination #}
+        {% if vacancies.has_prev or vacancies.has_next %}
+            <nav aria-label="Vacancy navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not vacancies.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('hr.dashboard', page=vacancies.prev_num) }}">Previous</a>
+                    </li>
+                    {% for page_num in vacancies.iter_pages() %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == vacancies.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('hr.dashboard', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if not vacancies.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('hr.dashboard', page=vacancies.next_num) }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            You haven't created any vacancies yet. <a href="{{ url_for('hr.create_vacancy') }}" class="alert-link">Create one now!</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

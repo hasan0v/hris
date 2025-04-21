@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Available Vacancies - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-5 text-white"> {# Added text-white for better contrast on gradient #}
+        <h1 class="display-4">Find Your Next Opportunity</h1>
+        <p class="lead">Explore open positions and get AI-powered feedback on your application.</p>
+    </div>
+
+    {# Display flashed messages #}
+    {% include '_flashes.html' %}
+
+    <h2 class="mb-4 text-white">Current Openings</h2> {# Added text-white #}
+
+    {% if vacancies %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for vacancy in vacancies %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm vacancy-card"> {# Added vacancy-card class #}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ vacancy.title }}</h5>
+                            <p class="card-text text-muted flex-grow-1">
+                                {# Show truncated description or placeholder #}
+                                {{ (vacancy.description[:150] + '...') if vacancy.description and vacancy.description|length > 150 else (vacancy.description or 'No description available.') }}
+                            </p>
+                            <div class="mt-auto"> {# Push button to bottom #}
+                                {% if current_user.is_authenticated and current_user.role == UserRole.APPLICANT %}
+                                    {# Check if user already applied #}
+                                    {% set has_applied = false %}
+                                    {% for app in current_user.applications if app.vacancy_id == vacancy.id %}
+                                        {% set has_applied = true %}
+                                    {% endfor %}
+
+                                    {% if has_applied %}
+                                         <button class="btn btn-secondary w-100 disabled">Already Applied</button>
+                                    {% else %}
+                                        {# Check if user has uploaded any CVs #}
+                                        {% if current_user.cv_files.first() %}
+                                            {# Form to submit the application with loading indicator #}
+                                            <form method="POST" action="{{ url_for('applicant.apply_for_vacancy', vacancy_id=vacancy.id) }}" class="d-grid apply-form"> {# Added class apply-form #}
+                                                {# Add CSRF token if needed #}
+                                                <button type="submit" class="btn btn-primary w-100 apply-button">
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span> {# Hidden spinner #}
+                                                    <span class="button-text">Apply Now</span> {# Text span #}
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            {# User needs to upload a CV first #}
+                                            <a href="{{ url_for('applicant.dashboard') }}" class="btn btn-warning w-100" title="Upload a CV first">Upload CV to Apply</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif not current_user.is_authenticated %}
+                                     <a href="{{ url_for('auth.login', next=url_for('index')) }}" class="btn btn-primary w-100">Login to Apply</a>
+                                {% else %} {# HR User #}
+                                     <a href="{{ url_for('hr.view_applicants', vacancy_id=vacancy.id) }}" class="btn btn-outline-secondary w-100">View Applicants</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted">
+                            Posted: {{ vacancy.created_at.strftime('%Y-%m-%d') }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-light" role="alert"> {# Changed to alert-light for better contrast #}
+            There are currently no open vacancies. Please check back later!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# Include scripts from base template if any #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const applyForms = document.querySelectorAll('.apply-form');
+    const loadingOverlay = document.getElementById('loading-overlay'); // Get overlay element
+
+    applyForms.forEach(form => {
+        form.addEventListener('submit', function(event) {
+            // Show the full-page overlay
+            if (loadingOverlay) {
+                loadingOverlay.classList.remove('d-none');
+            }
+
+            // Optionally disable the button still, though overlay covers it
+            const button = form.querySelector('.apply-button');
+            if (button) button.disabled = true;
+
+            // Note: The overlay will remain visible until the page reloads after redirect.
+            // For SPAs or AJAX, you'd hide the overlay on response.
+            // might involve AJAX, but this provides basic visual feedback.
+        });
+    });
+});
+</script>
+{% endblock %}

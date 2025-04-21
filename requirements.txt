@@ -1,0 +1,42 @@
+# Core Flask Framework
+Flask>=2.0,<3.0
+
+# Database ORM and Migrations
+Flask-SQLAlchemy>=2.5
+# Flask-Migrate>=3.0 # Removed as we are not using migrations for now
+PyMySQL>=1.0 # MySQL Driver
+
+# Authentication
+Flask-Login>=0.5
+
+# Real-time Communication
+Flask-SocketIO>=5.0
+python-socketio>=5.0 # Required by Flask-SocketIO
+eventlet # Or gevent, needed for Flask-SocketIO production/async
+
+# CV Parsing
+pdfminer.six>=20221105
+python-docx>=1.0
+
+# OpenAI API Client
+openai>=1.0
+
+# Configuration Management
+python-dotenv>=0.20
+
+# Forms and CSRF Protection
+Flask-WTF>=1.0
+
+# Add other dependencies as needed, e.g.:
+# Flask-Babel (for i18n)
+# APScheduler (for scheduled tasks)
+# gunicorn / waitress (for production WSGI server)
+
+# Sass Compilation
+libsass>=0.20
+
+# Internationalization (i18n) - Removed
+# Flask-Babel>=2.0
+
+# Production WSGI Server
+waitress>=2.0

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: iris_web
+    ports:
+      - "5000:5000" # Map host port 5000 to container port 5000
+    volumes:
+      # Mount the current directory into the container's /app directory
+      # This allows for live code changes during development without rebuilding
+      - .:/app
+      # Persist uploaded files outside the container lifecycle (optional but good practice)
+      # Ensure the 'uploads' volume is defined below
+      - uploads_data:/app/uploads
+    environment:
+      # Set environment variables for the container
+      - FLASK_ENV=development # Use 'production' for production
+      - FLASK_DEBUG=1 # Enable Flask debugger in development
+      # SECRET_KEY should be set securely, e.g., via .env file or secrets management
+      - SECRET_KEY=you-should-really-change-this-in-prod
+      # DATABASE_URL can override the default SQLite path if needed
+      # - DATABASE_URL=postgresql://user:password@db:5432/iris_db
+      # OPENAI_API_KEY should be loaded from .env or environment
+      - OPENAI_API_KEY=${OPENAI_API_KEY} # Pass through from host environment or .env
+    # depends_on: # Add dependencies like a database service here if needed
+    #   - db
+    # Load environment variables from a .env file in the project root
+    env_file:
+      - .env
+
+# Define named volumes
+volumes:
+  uploads_data:
+
+# Example database service (PostgreSQL - for future use as per PRD v2)
+# db:
+#   image: postgres:14-alpine
+#   container_name: iris_db
+#   volumes:
+#     - postgres_data:/var/lib/postgresql/data/
+#   environment:
+#     - POSTGRES_USER=your_db_user
+#     - POSTGRES_PASSWORD=your_db_password
+#     - POSTGRES_DB=iris_db
+#   ports:
+#     - "5432:5432"
+
+# volumes:
+#   postgres_data:

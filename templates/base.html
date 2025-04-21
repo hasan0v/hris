@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Custom CSS (will be created later) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>{% block title %}IRIS - Job Application Platform{% endblock %}</title>
+
+    <!-- Styles moved to static/css/style.css -->
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}"> {# Added flex alignment #}
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IRIS Logo" class="navbar-logo me-2"> {# Added logo image #}
+                <span>IRIS</span> {# Kept text separate for styling #}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        {# Role-specific dashboard links #}
+                        {% if current_user.role == UserRole.APPLICANT %}
+                            <li class="nav-item">
+                                {# Link to applicant dashboard #}
+                                <a class="nav-link" href="{{ url_for('applicant.dashboard') }}">Applicant Dashboard</a> {# Updated URL #}
+                            </li>
+                        {% elif current_user.role == UserRole.HR %}
+                            <li class="nav-item">
+                                {# Link to HR dashboard #}
+                                <a class="nav-link" href="{{ url_for('hr.dashboard') }}">HR Dashboard</a> {# Updated URL #}
+                            </li>
+                        {% endif %}
+                         {# Common authenticated user links #}
+                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i> {{ current_user.full_name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                                {# Add profile link later if needed #}
+                                {# <li><a class="dropdown-item" href="#">Profile</a></li> #}
+                                {# <li><hr class="dropdown-divider"></li> #}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a> {# Updated link #}
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a> {# Updated link #}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        {% block content %}
+        <!-- Page specific content will go here -->
+        {% endblock %}
+    </main>
+
+    <footer class="mt-auto py-3 bg-light text-center">
+         <div class="container">
+            <span class="text-muted">© 2025 IRIS Platform</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+
+    <!-- Custom JS (if needed) -->
+    {# <script src="{{ url_for('static', filename='js/script.js') }}"></script> #}
+
+    {% block scripts %}
+    <!-- Page specific scripts -->
+    {% endblock %}
+
+    {# Full-page loading overlay #}
+    <div id="loading-overlay" class="loading-overlay d-none">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+</body>
+</html>

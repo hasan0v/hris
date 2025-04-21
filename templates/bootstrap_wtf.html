@@ -1,0 +1,34 @@
+{# Macro to render a WTForms field using Bootstrap 5 styles #}
+{% macro render_field(field, label_visible=true) -%}
+    <div class="mb-3">
+        {% if label_visible %}
+            {{ field.label(class="form-label") }}
+        {% endif %}
+
+        {% if field.type == 'StringField' %}
+            {{ field(class="form-control" + (" is-invalid" if field.errors else ""), **kwargs) }}
+        {% elif field.type == 'PasswordField' %}
+            {{ field(class="form-control" + (" is-invalid" if field.errors else ""), **kwargs) }}
+        {% elif field.type == 'BooleanField' %}
+            <div class="form-check">
+                {{ field(class="form-check-input" + (" is-invalid" if field.errors else ""), **kwargs) }}
+                {{ field.label(class="form-check-label") }}
+            </div>
+        {% elif field.type == 'SelectField' %}
+             {{ field(class="form-select" + (" is-invalid" if field.errors else ""), **kwargs) }}
+        {% elif field.type == 'TextAreaField' %}
+            {{ field(class="form-control" + (" is-invalid" if field.errors else ""), rows=3, **kwargs) }}
+        {% else %}
+            {# Default rendering for other field types #}
+            {{ field(class="form-control" + (" is-invalid" if field.errors else ""), **kwargs) }}
+        {% endif %}
+
+        {% if field.errors %}
+            <div class="invalid-feedback">
+                {% for error in field.errors %}
+                    <span>{{ error }}</span><br>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{%- endmacro %}
