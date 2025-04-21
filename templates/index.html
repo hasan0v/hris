@@ -4,10 +4,20 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="text-center mb-5 text-white"> {# Added text-white for better contrast on gradient #}
-        <h1 class="display-4">Find Your Next Opportunity</h1>
-        <p class="lead">Explore open positions and get AI-powered feedback on your application.</p>
+    {# Text Flipping Animation - Moved to top #}
+    <div id="container" class="text-center mb-5"> {# Added text-center, mb-5 #}
+        Find Your
+        <div id="flip">
+            <div><div>Dream Job</div></div>
+            <div><div>Next Role</div></div>
+            <div><div>Perfect Fit</div></div>
+        </div>
+        Here!
     </div>
+    {# Lead paragraph moved below flipper #}
+    <p class="lead text-center mb-5" style="color: #adb5d4;"> {# Added text-center, mb-5 and inline color #}
+        Explore open positions and get AI-powered feedback on your application.
+    </p>
 
     {# Display flashed messages #}
     {% include '_flashes.html' %}
@@ -15,7 +25,7 @@
     <h2 class="mb-4 text-white">Current Openings</h2> {# Added text-white #}
 
     {% if vacancies %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-1 row-cols-md-2 mb-3 row-cols-lg-3 g-4">
             {% for vacancy in vacancies %}
                 <div class="col">
                     <div class="card h-100 shadow-sm vacancy-card"> {# Added vacancy-card class #}
@@ -75,6 +85,9 @@
 
 {% block scripts %}
 {{ super() }} {# Include scripts from base template if any #}
+
+{# Removed Spline Initialization Script #}
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const applyForms = document.querySelectorAll('.apply-form');

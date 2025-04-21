@@ -72,32 +72,25 @@
                                         {% set score_percent = ( [0, [app.score, 5]|min]|max / 5 ) * 100 %}
                                         <div class="progress-bar" style="width: {{ score_percent }}%">{{ "%.2f"|format(app.score) }} / 5.00</div>
                                     </div>
-                                    {# Accordion for score breakdown #}
-                                    <div class="accordion accordion-flush mt-2" id="accordionScore{{ app.id }}">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="headingScore{{ app.id }}">
-                                                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScore{{ app.id }}" aria-expanded="false" aria-controls="collapseScore{{ app.id }}">
-                                                    View Score Breakdown
-                                                </button>
-                                            </h2>
-                                            <div id="collapseScore{{ app.id }}" class="accordion-collapse collapse" aria-labelledby="headingScore{{ app.id }}" data-bs-parent="#accordionScore{{ app.id }}">
-                                                <div class="accordion-body py-2">
-                                                    <ul class="list-unstyled mb-0 small"> {# Made text smaller #}
-                                                        {% if app.score_breakdown %}
-                                                            {# Display detailed sections - use readable names #}
-                                                            <li>Relevant Experience: {{ "%.1f"|format(app.score_breakdown.get('relevant_experience_years')) if app.score_breakdown.get('relevant_experience_years') is not none else 'N/A' }}</li>
-                                                            <li>Technical Skills Match: {{ "%.1f"|format(app.score_breakdown.get('technical_skills_match')) if app.score_breakdown.get('technical_skills_match') is not none else 'N/A' }}</li>
-                                                            <li>Education Relevance: {{ "%.1f"|format(app.score_breakdown.get('education_level_relevance')) if app.score_breakdown.get('education_level_relevance') is not none else 'N/A' }}</li>
-                                                            <li>Project/Portfolio Quality: {{ "%.1f"|format(app.score_breakdown.get('project_portfolio_quality')) if app.score_breakdown.get('project_portfolio_quality') is not none else 'N/A' }}</li>
-                                                            <li>Keyword Alignment: {{ "%.1f"|format(app.score_breakdown.get('keyword_alignment')) if app.score_breakdown.get('keyword_alignment') is not none else 'N/A' }}</li>
-                                                            <li>Communication Clarity: {{ "%.1f"|format(app.score_breakdown.get('communication_clarity')) if app.score_breakdown.get('communication_clarity') is not none else 'N/A' }}</li>
-                                                        {% else %}
-                                                            <li>No breakdown available.</li>
-                                                        {% endif %}
-                                                    </ul>
+                                    {# Gauge Chart Section for Score Breakdown #}
+                                    <div class="score-breakdown-gauges mt-3 d-flex flex-wrap justify-content-start align-items-center">
+                                        {% if app.score_breakdown %}
+                                            {# Define colors to cycle through for gauges #}
+                                            {% set gauge_colors = ['#894b73', '#d765b2', '#d38fc9', '#adb5d4', '#89ceda', '#a6c7cd'] %}
+                                            {% for section_key, score in app.score_breakdown.items() %}
+                                                {% set readable_name = section_key|replace('_', ' ')|title %}
+                                                {% set color_index = loop.index0 % gauge_colors|length %}
+                                                {% set gauge_color = gauge_colors[color_index] %}
+                                                <div class="text-center me-3 mb-2 gauge-container" style="max-width: 90px;">
+                                                    <canvas id="gauge-{{ app.id }}-{{ section_key }}" width="80" height="80"
+                                                            data-score="{{ score if score is not none else 0 }}"
+                                                            data-color="{{ gauge_color }}"></canvas>
+                                                    <small class="text-muted d-block mt-1">{{ readable_name }}</small>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <small class="text-muted">Score breakdown not available.</small>
+                                        {% endif %}
                                     </div>
                                 {% elif app.status == ApplicationStatus.SCORING %}
                                      <p class="mb-1 fst-italic text-muted">Scoring in progress...</p>
@@ -229,6 +222,81 @@
                 item.id = `application-${appId}`;
             }
         });
+
+        // --- Initialize Gauge Charts ---
+        const gaugeCanvases = document.querySelectorAll('.score-breakdown-gauges canvas');
+        const gaugeBackgroundColor = '#e9ecef'; // Background color for the empty part of the gauge
+        const gaugeTextColor = '#2F4F4F'; // Use dark text color for inside gauge
+
+        // --- Chart.js Plugin to draw text in the center ---
+        const centerTextPlugin = {
+            id: 'centerText',
+            afterDraw: (chart) => {
+                if (chart.data.datasets.length === 0 || chart.data.datasets[0].data.length === 0) {
+                    return;
+                }
+                const ctx = chart.ctx;
+                const score = chart.data.datasets[0].data[0]; // Get the actual score value
+                const text = score.toFixed(1); // Format to one decimal place
+
+                // Get canvas dimensions and center point
+                const { width, height } = chart;
+                const centerX = width / 2;
+                const centerY = height / 2;
+
+                // Style the text
+                ctx.restore(); // Restore context to default state before drawing text
+                const fontSize = (height / 4).toFixed(0); // Adjust font size based on canvas height
+                ctx.font = `bold ${fontSize}px ${Chart.defaults.font.family}`; // Use Chart.js default font family
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = gaugeTextColor; // Use defined text color
+
+                // Draw text
+                ctx.fillText(text, centerX, centerY);
+                ctx.save(); // Save context state
+            }
+        };
+        // --- End Plugin ---
+
+        gaugeCanvases.forEach(canvas => {
+            const score = parseFloat(canvas.dataset.score) || 0;
+            const color = canvas.dataset.color || '#6c757d'; // Default color if not specified
+            const scoreClamped = Math.max(0, Math.min(score, 5)); // Ensure score is between 0 and 5
+            const remaining = 5.0 - scoreClamped;
+
+            new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [scoreClamped, remaining],
+                        backgroundColor: [color, gaugeBackgroundColor],
+                        borderWidth: 0, // No border between segments
+                        circumference: 270, // Make it a 3/4 circle gauge
+                        rotation: -135,     // Start at bottom-left
+                    }]
+                },
+                plugins: [centerTextPlugin], // Register the custom plugin
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1, // Keep it square
+                    cutout: '80%', // Adjust thickness of the gauge ring
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: false
+                    }
+                }
+            });
+
+            // Optional: Add score text in the middle (more complex)
+            // Requires Chart.js plugin or custom drawing on canvas context
+        });
+        // --- End Gauge Chart Initialization ---
 
     });
 </script>

@@ -16,12 +16,15 @@
 
     <title>{% block title %}IRIS - Job Application Platform{% endblock %}</title>
 
+    <!-- Spline Runtime Removed -->
+
     <!-- Styles moved to static/css/style.css -->
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    {# Use custom gradient for navbar #}
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-gradient shadow-sm mb-4"> {# Removed bg-dark, added navbar-gradient #}
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}"> {# Added flex alignment #}
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IRIS Logo" class="navbar-logo me-2"> {# Added logo image #}
                 <span>IRIS</span> {# Kept text separate for styling #}
             </a>
@@ -29,6 +32,19 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                {# Left-aligned nav items #}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Browse Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About Us</a> {# Placeholder Link #}
+                    </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a> {# Placeholder Link #}
+                    </li>
+                </ul>
+                {# Right-aligned nav items #}
                 <ul class="navbar-nav ms-auto">
                     {% if current_user.is_authenticated %}
                         {# Role-specific dashboard links #}
@@ -74,9 +90,55 @@
         {% endblock %}
     </main>
 
-    <footer class="mt-auto py-3 bg-light text-center">
-         <div class="container">
-            <span class="text-muted">© 2025 IRIS Platform</span>
+    {# Enhanced Footer #}
+    <footer class="footer mt-auto pt-5 pb-4"> {# Increased padding #}
+         <div class="container text-center text-md-start">
+            <div class="row gy-4"> {# Use gy-4 for vertical gap on small screens #}
+                {# Column 1: Brand/Description #}
+                <div class="col-md-4 col-lg-5">
+                    <h5 class="text-uppercase fw-bold mb-4 d-flex align-items-center justify-content-center justify-content-md-start">
+                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IRIS Logo" class="navbar-logo me-2">
+                         IRIS Platform
+                    </h5>
+                    <p>
+                        Streamlining recruitment with intelligent CV analysis and transparent scoring. Find your fit, faster.
+                    </p>
+                </div>
+
+                {# Column 2: Quick Links #}
+                <div class="col-md-2 col-lg-2 mx-auto">
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Navigate
+                    </h6>
+                    <p><a href="{{ url_for('index') }}" class="footer-link">Browse Jobs</a></p>
+                    <p><a href="#" class="footer-link">About Us</a></p> {# Placeholder #}
+                    <p><a href="#" class="footer-link">Contact</a></p> {# Placeholder #}
+                </div>
+
+                {# Column 3: Legal #}
+                 <div class="col-md-2 col-lg-2 mx-auto">
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Legal
+                    </h6>
+                    <p><a href="#" class="footer-link">Privacy Policy</a></p> {# Placeholder #}
+                    <p><a href="#" class="footer-link">Terms of Service</a></p> {# Placeholder #}
+                </div>
+
+                 {# Column 4: Social (Optional) #}
+                 <div class="col-md-3 col-lg-2 mx-auto text-center">
+                     <h6 class="text-uppercase fw-bold mb-4">
+                        Connect
+                    </h6>
+                     {# Add social icons later if needed #}
+                     <a href="#" class="footer-link me-3"><i class="bi bi-linkedin fs-4"></i></a>
+                     <a href="#" class="footer-link me-3"><i class="bi bi-twitter-x fs-4"></i></a>
+                     <a href="#" class="footer-link"><i class="bi bi-github fs-4"></i></a>
+                 </div>
+            </div>
+            <hr class="my-4 footer-hr"> {# Custom HR style needed #}
+            <div class="text-center text-muted small">
+                 © 2025 IRIS Platform - All Rights Reserved
+            </div>
         </div>
     </footer>
 
@@ -92,6 +154,9 @@
     {% block scripts %}
     <!-- Page specific scripts -->
     {% endblock %}
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
     {# Full-page loading overlay #}
     <div id="loading-overlay" class="loading-overlay d-none">

@@ -1,90 +1,259 @@
-// Import Bootstrap functions and variables if needed for customization later
-// @import "../../../../node_modules/bootstrap/scss/functions";
-// @import "../../../../node_modules/bootstrap/scss/variables";
+// Import Google Font
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700');
 
-// Define custom variables (e.g., PRD colors)
-$gradient-start: #1E1BFE;
-$gradient-end: #C75CFF;
-$cyan-accent: #0dcaf0; // Bootstrap's cyan
-$navbar-logo-height: 30px; // Define logo height
+// --- Cosmic Theme Palette & Variables ---
+$cosmic-purple: #483D8B; // Dark Slate Blue (as a base purple)
+$cosmic-blue: #504df0; // Steel Blue (as a base blue)
+$accent-pink: #9f035e; // Pale Violet Red (accent)
+$accent-cyan: #3d3dff; // Aquamarine (accent)
+$light-text: #F0F8FF; // Alice Blue (for dark backgrounds)
+$dark-text: #2F4F4F; // Dark Slate Gray (for light backgrounds)
+$white: #FFFFFF;
+$card-bg: rgba(255, 255, 255, 0.9); // Slightly transparent white cards
+$card-border: rgba(0, 0, 0, 0.1);
+$navbar-footer-bg: darken($cosmic-purple, 10%); // Darker purple for nav/footer
+$over-the-moon: #adb5d4; // Define the missing color variable
 
-// Use a modern, clean font stack (similar to Bootstrap 5 default)
-$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+// Functional Roles (Adjust as needed)
+$primary-color: $cosmic-purple; // Use cosmic purple as primary
+$secondary-color: $over-the-moon; // Use over-the-moon as secondary
+$background-color: linear-gradient(135deg, $cosmic-blue 0%, $cosmic-purple 100%); // Gradient background
+$accent-color-1: $accent-cyan; // Cyan accent
+$accent-color-2: $accent-pink; // Pink accent
+$body-text-color: $light-text; // Light text on gradient background
+$dark-bg: #1A202C; // Keep dark bg for overlay
 
-/* Basic gradient background as per PRD */
+$navbar-logo-height: 30px;
+$font-family-sans-serif: 'Roboto', system-ui, -apple-system, "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+// --- End Cosmic Theme Palette ---
+
+/* Global Styles */
 body {
-    font-family: $font-family-sans-serif; // Apply the modern font stack
-    background: linear-gradient(to right, $gradient-start, $gradient-end);
-    min-height: 100vh; /* Ensure gradient covers full height */
-    color: #333; /* Default text color for contrast on cards */
-    display: flex; /* Used with flex-column to push footer down */
-    flex-direction: column; /* Stack elements vertically */
+    font-family: $font-family-sans-serif;
+    background: $background-color; // Apply the cosmic gradient background
+    background-attachment: fixed; // Keep gradient fixed during scroll
+    color: $body-text-color; // Default text color is light for the gradient bg
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Ensure main content area takes available space */
 main {
-    flex: 1; /* Allows main to grow and push footer down */
+    flex: 1;
 }
 
-/* Style for white cards */
+/* Card Styling */
 .card {
-    background-color: #ffffff;
-    // Add box-shadow for a subtle lift?
-    // box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-
-/* Cyan hover accents */
-a:hover {
-    color: $cyan-accent;
-    opacity: 0.85;
-}
-
-.btn-primary {
-    // Standard primary button style (can customize later)
+    background-color: $card-bg;
+    border: 1px solid $card-border;
+    border-radius: 0.75rem; // More rounded
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1); // Softer shadow
+    color: $dark-text; // Dark text on light cards
+    transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(5px); // Blur background behind card
+    -webkit-backdrop-filter: blur(5px);
     &:hover {
-        background-color: #0b5ed7; // Default darker blue
-        border-color: #0a58ca;
-        opacity: 0.9;
-        // Or use cyan accent:
-        // background-color: $cyan-accent;
-        // border-color: $cyan-accent;
-        // color: white;
+       box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+       border-color: darken($card-border, 10%);
+       transform: translateY(-5px); // Slightly more lift
+    }
+    .card-header, .card-footer {
+        background-color: rgba(255, 255, 255, 0.7); // Lighter header/footer
+        border-color: $card-border;
+        color: darken($dark-text, 10%);
+    }
+    .card-title {
+        color: darken($cosmic-purple, 10%); // Darker purple title
+        font-weight: 700;
+    }
+    .text-muted {
+        color: lighten($dark-text, 25%) !important;
     }
 }
 
+/* General Link Styling */
+a {
+  color: $accent-cyan; // Use cyan accent for links
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    text-decoration: none;
+    color: lighten($accent-cyan, 10%);
+    filter: brightness(1.1); // Add brightness on hover
+  }
+}
+
+// General Button Styling & Transitions
+.btn {
+    transition: all 0.25s ease-in-out;
+    border-radius: 50px; // Pill shaped buttons
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    border: none; // Remove border for cleaner look
+    &:hover {
+        transform: translateY(-3px) scale(1.03); // Lift and scale
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+    &:active {
+         transform: translateY(0px) scale(1); // Reset on click
+         box-shadow: none;
+    }
+}
+
+// Primary Button Styling
+.btn-primary {
+    background: linear-gradient(135deg, $cosmic-blue, $cosmic-purple); // Gradient button
+    border: none;
+    color: $light-text;
+    &:hover {
+        background: linear-gradient(135deg, lighten($cosmic-blue, 5%), lighten($cosmic-purple, 5%));
+        color: $white;
+    }
+}
+
+// Success Button Styling
+.btn-success {
+     background-color: $accent-cyan;
+     border-color: $accent-cyan;
+     color: $light-text;
+     &:hover {
+        background-color: darken($accent-cyan, 8%);
+        border-color: darken($accent-cyan, 10%);
+        color: $light-text;
+     }
+}
+
+// Warning Button Styling
+.btn-warning {
+     background-color: $accent-pink;
+     border-color: $accent-pink;
+     color: $white;
+     &:hover {
+        background-color: darken($accent-pink, 8%);
+        border-color: darken($accent-pink, 10%);
+        color: $white;
+     }
+}
+
+.btn-outline-danger {
+     border: 2px solid $accent-pink;
+     color: $accent-pink;
+     background-color: transparent;
+     &:hover {
+        background-color: $accent-pink;
+        border-color: $accent-pink;
+        color: $white;
+     }
+}
+.btn-outline-warning {
+     border: 2px solid $accent-pink;
+     color: $accent-pink;
+     background-color: transparent;
+     &:hover {
+        background-color: $accent-pink;
+        border-color: $accent-pink;
+        color: $white;
+     }
+}
+.btn-outline-secondary {
+    border: 2px solid $secondary-color;
+    color: $secondary-color;
+    background-color: transparent;
+     &:hover {
+        background-color: $secondary-color;
+        border-color: $secondary-color;
+        color: $dark-text;
+     }
+}
 
 /* Ensure footer stays at the bottom */
 footer {
-    flex-shrink: 0; /* Prevent footer from shrinking */
-    // background-color: #f8f9fa !important; /* Ensure light background */
-}
-
-// Add more custom styles or overrides here
-.text-white {
-    color: #fff !important; // Ensure white text overrides defaults on gradient
-}
-
-.vacancy-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    }
-}
-
-.hr-vacancy-card {
-    // Similar hover effect, maybe slightly different background or border on hover?
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-     &:hover {
-        transform: translateY(-3px); // Slightly less lift than index cards
-        box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.12);
-    }
+    flex-shrink: 0;
 }
 
 // Navbar logo styling
+.navbar-brand {
+    font-weight: 700;
+    color: $light-text !important; // Ensure brand text is light
+}
 .navbar-logo {
     height: $navbar-logo-height;
-    width: auto; // Maintain aspect ratio
+    width: auto;
+}
+.navbar {
+    // Remove default background/padding if needed before applying gradient
+    // background-color: transparent !important; // Override Bootstrap bg
+    padding-top: 0.75rem; // Adjust padding as needed
+    padding-bottom: 0.75rem;
+
+    .nav-link {
+        color: rgba($light-text, 0.8) !important;
+        &:hover {
+            color: $white !important;
+        }
+    }
+    .dropdown-menu { // Style dropdown
+        background-color: lighten($navbar-footer-bg, 5%);
+        border-color: lighten($navbar-footer-bg, 15%);
+        .dropdown-item {
+            color: $light-text;
+            &:hover {
+                background-color: lighten($navbar-footer-bg, 15%);
+                color: $white;
+            }
+        }
+    }
+    // Removed extra closing brace here
+}
+
+// Custom Navbar Gradient Background
+.navbar-gradient {
+    background: linear-gradient(to right, darken($navbar-footer-bg, 5%), $navbar-footer-bg); // Subtle dark gradient
+    // Ensure text remains light
+    .navbar-brand, .nav-link, .dropdown-item {
+        color: $light-text !important; // Use important to override specificity if needed
+    }
+     .nav-link:hover {
+         color: $white !important;
+     }
+     .dropdown-menu { // Keep dropdown slightly different
+        background-color: lighten($navbar-footer-bg, 5%);
+        border-color: lighten($navbar-footer-bg, 15%);
+     }
+}
+
+
+// Footer Styling
+footer.footer {
+    background-color: $navbar-footer-bg;
+    color: rgba($light-text, 0.7);
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-top: 3rem;
+    border-top: 1px solid lighten($navbar-footer-bg, 10%);
+    .text-muted {
+        color: rgba($light-text, 0.5) !important;
+    }
+    // Footer Links
+    a.footer-link {
+        color: rgba($light-text, 0.8);
+        text-decoration: none;
+        &:hover {
+            color: $white;
+            text-decoration: underline;
+        }
+    }
+    // Footer HR
+    hr.footer-hr {
+        border: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, rgba($light-text, 0), rgba($light-text, 0.3), rgba($light-text, 0));
+        opacity: 0.5;
+    }
+    // Footer Social Icons
+    .bi { // General icon styling in footer
+        transition: color 0.2s ease-in-out;
+    }
 }
 
 // Loading Overlay Styles
@@ -94,16 +263,218 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); // Semi-transparent black background
+  background-color: rgba(darken($cosmic-purple, 20%), 0.7); // Darker purple overlay
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1060; // Higher than navbar (usually 1030) but below modals (usually 1050/1055)
-  backdrop-filter: blur(3px); // Apply blur effect
-  -webkit-backdrop-filter: blur(3px); // For Safari
+  z-index: 1060;
+  backdrop-filter: blur(4px); // Slightly more blur
+  -webkit-backdrop-filter: blur(4px);
 
   .spinner-border {
-    width: 3rem; // Make spinner larger
-    height: 3rem;
+    width: 3.5rem; // Larger spinner
+    height: 3.5rem;
+    color: $light-text;
+    border-width: 0.3em; // Thicker border
   }
+}
+
+// --- Text Flipping Animation Styles ---
+#container {
+  color: $light-text; // Light text on gradient background
+  text-transform: uppercase;
+  font-size: 2.5rem; // Slightly larger
+  font-weight: 700;
+  display: block;
+  text-align: center;
+  margin-top: 3rem; // Increased top margin
+  margin-bottom: 1rem; // Reduced bottom margin before lead paragraph
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+#flip {
+  height: 60px; // Increased height
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom; // Align better with text
+}
+
+#flip > div > div {
+  color: $white;
+//   padding: 5px 15px; // Adjust padding
+  height: 55px; // Increased height
+  margin-bottom: 55px; // Match height
+  display: inline-block;
+  border-radius: 0.3rem;
+  text-shadow: none; // Remove shadow from flipped text
+}
+
+#flip div:first-child {
+  animation: show 6s linear infinite; // Slightly slower animation
+}
+
+// Use new theme colors for backgrounds
+#flip div div { // Dream Job
+  background: $accent-pink; // Pink
+      padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 19px;
+    box-shadow: 2px 2px 3px black;
+}
+#flip div:nth-child(2) div { // Next Role
+  background: $accent-cyan; // Cyan
+}
+#flip div:last-child div { // Perfect Fit
+  background: $primary-color; // Grape Kiss
+}
+
+// Adjust keyframes for new height
+@keyframes show {
+  0% {margin-top:-330px;} // 6 * 55px
+  5% {margin-top:-220px;} // 4 * 55px
+  33% {margin-top:-220px;}
+  38% {margin-top:-110px;} // 2 * 55px
+  66% {margin-top:-110px;}
+  71% {margin-top:0px;}
+  99.99% {margin-top:0px;}
+  100% {margin-top:-330px;}
+}
+// --- End Text Flipping Animation Styles ---
+
+// --- Spline Container Styles Removed ---
+
+// --- Gauge Chart Styles ---
+.gauge-container {
+    max-width: 90px; // Ensure container doesn't stretch too wide
+}
+// --- End Gauge Chart Styles ---
+
+// --- Additional Visual Enhancements ---
+h1, h2, h3, h4, h5, h6 {
+    color: $light-text; // Light headings on dark bg
+    font-weight: 700;
+}
+h1.display-4 {
+    color: $white;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+.lead {
+    color: $over-the-moon;
+    font-size: 1.1rem;
+    margin-bottom: 4rem !important; // Ensure enough space below lead paragraph
+}
+
+hr { // Custom HR
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba($light-text, 0), rgba($light-text, 0.5), rgba($light-text, 0));
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    opacity: 0.5;
+}
+
+// Form inputs on light cards
+.form-control, .form-select {
+    background-color: $white;
+    border-color: $card-border;
+    color: $dark-text;
+    &:focus {
+        background-color: $white;
+        border-color: $primary-color;
+        color: $dark-text;
+        box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
+    }
+    &::placeholder {
+        color: lighten($dark-text, 40%);
+    }
+}
+.form-check-input {
+     background-color: $white;
+     border-color: $card-border;
+     &:checked {
+         background-color: $primary-color;
+         border-color: $primary-color;
+     }
+     &:focus {
+         border-color: $primary-color;
+         box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
+     }
+}
+.form-label {
+    color: $dark-text; // Dark labels on light cards
+    font-weight: 500;
+}
+
+// Progress bar on light cards
+.progress {
+    background-color: lighten($card-border, 10%);
+    border: none;
+    .progress-bar {
+        background-color: $primary-color;
+        color: $white;
+        font-weight: 500;
+    }
+}
+
+// Accordion on light cards
+.accordion-button {
+    // Cannot lighten a gradient, use a solid color derived from card/border
+    background-color: lighten($card-border, 35%); // Use a lightened border color
+    color: $dark-text;
+    font-weight: 500;
+    &:not(.collapsed) {
+         background-color: $white;
+         color: $primary-color;
+         box-shadow: inset 0 -1px 0 $card-border;
+    }
+    &::after {
+        filter: none; // Use default icon color
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.25rem rgba($primary-color, 0.25);
+        border-color: $primary-color;
+    }
+}
+.accordion-body {
+    background-color: $card-bg;
+    color: $dark-text;
+}
+.accordion-item {
+     border-color: $card-border;
+     background-color: $card-bg; // Ensure item bg matches card
+}
+
+// Table styling on light cards
+.table {
+    color: $dark-text;
+    border-color: $card-border;
+    th {
+        color: $dark-text;
+        font-weight: 500;
+    }
+    &.table-striped > tbody > tr:nth-of-type(odd) > * {
+        --bs-table-accent-bg: rgba($dark-text, 0.03);
+        color: $dark-text;
+    }
+    &.table-hover > tbody > tr:hover > * {
+        --bs-table-accent-bg: rgba($dark-text, 0.06);
+        color: $dark-text;
+    }
+}
+
+// Modal styling (assuming modals appear over the main gradient bg)
+.modal-content {
+    background-color: $card-bg; // Use card background
+    color: $dark-text; // Dark text
+    border-color: $card-border;
+}
+.modal-header {
+    border-bottom-color: $card-border;
+    .btn-close {
+        filter: none; // Default close button color
+    }
+}
+.modal-footer {
+    border-top-color: $card-border;
 }
