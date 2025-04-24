@@ -40,3 +40,4 @@ libsass>=0.20
 
 # Production WSGI Server
 waitress>=2.0
+email_validator
