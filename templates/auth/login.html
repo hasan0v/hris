@@ -196,8 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Submit button loading state
     const submitBtn = document.querySelector('.auth-submit-btn');
-    const form = document.querySelector('.auth-form');
-    
+    const form = document.querySelector('.auth-form');    
     if (form && submitBtn) {
         form.addEventListener('submit', function() {
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Signing In...';
@@ -206,5 +205,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-{% endblock %}
 {% endblock %}
