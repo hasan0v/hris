@@ -3,112 +3,350 @@
 {% block title %}Available Vacancies - {{ super() }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    {# Text Flipping Animation - Moved to top #}
-    <div id="container" class="text-center mb-5"> {# Added text-center, mb-5 #}
-        Find Your
-        <div id="flip">
-            <div><div>Dream Job</div></div>
-            <div><div>Next Role</div></div>
-            <div><div>Perfect Fit</div></div>
-        </div>
-        Here!
+{# Hero Section with Animated Background #}
+<div class="hero-section">
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+        <div class="shape shape-6"></div>
     </div>
-    {# Lead paragraph moved below flipper #}
-    <p class="lead text-center mb-5" style="color: #adb5d4;"> {# Added text-center, mb-5 and inline color #}
-        Explore open positions and get AI-powered feedback on your application.
-    </p>
-
-    {# Display flashed messages #}
-    {% include '_flashes.html' %}
-
-    <h2 class="mb-4 text-white">Current Openings</h2> {# Added text-white #}
-
-    {% if vacancies %}
-        <div class="row row-cols-1 row-cols-md-2 mb-3 row-cols-lg-3 g-4">
-            {% for vacancy in vacancies %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm vacancy-card"> {# Added vacancy-card class #}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ vacancy.title }}</h5>
-                            <p class="card-text text-muted flex-grow-1">
-                                {# Show truncated description or placeholder #}
-                                {{ (vacancy.description[:150] + '...') if vacancy.description and vacancy.description|length > 150 else (vacancy.description or 'No description available.') }}
-                            </p>
-                            <div class="mt-auto"> {# Push button to bottom #}
-                                {% if current_user.is_authenticated and current_user.role == UserRole.APPLICANT %}
-                                    {# Check if user already applied #}
-                                    {% set has_applied = false %}
-                                    {% for app in current_user.applications if app.vacancy_id == vacancy.id %}
-                                        {% set has_applied = true %}
-                                    {% endfor %}
-
-                                    {% if has_applied %}
-                                         <button class="btn btn-secondary w-100 disabled">Already Applied</button>
-                                    {% else %}
-                                        {# Check if user has uploaded any CVs #}
-                                        {% if current_user.cv_files.first() %}
-                                            {# Form to submit the application with loading indicator #}
-                                            <form method="POST" action="{{ url_for('applicant.apply_for_vacancy', vacancy_id=vacancy.id) }}" class="d-grid apply-form"> {# Added class apply-form #}
-                                                {# Add CSRF token if needed #}
-                                                <button type="submit" class="btn btn-primary w-100 apply-button">
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span> {# Hidden spinner #}
-                                                    <span class="button-text">Apply Now</span> {# Text span #}
-                                                </button>
-                                            </form>
-                                        {% else %}
-                                            {# User needs to upload a CV first #}
-                                            <a href="{{ url_for('applicant.dashboard') }}" class="btn btn-warning w-100" title="Upload a CV first">Upload CV to Apply</a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% elif not current_user.is_authenticated %}
-                                     <a href="{{ url_for('auth.login', next=url_for('index')) }}" class="btn btn-primary w-100">Login to Apply</a>
-                                {% else %} {# HR User #}
-                                     <a href="{{ url_for('hr.view_applicants', vacancy_id=vacancy.id) }}" class="btn btn-outline-secondary w-100">View Applicants</a>
-                                {% endif %}
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-50">            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title mb-4" data-aos="fade-up">
+                        Find Your
+                        <div id="flip" class="d-inline-block">
+                            <div><div>Dream Job</div></div>
+                            <div><div>Next Role</div></div>
+                            <div><div>Perfect Fit</div></div>
+                        </div>
+                    </h1>
+                    <p class="hero-subtitle mb-4" data-aos="fade-up" data-aos-delay="200">
+                        Explore open positions and get AI-powered feedback on your application with our intelligent recruitment platform.
+                    </p>
+                    <div class="hero-buttons d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start" data-aos="fade-up" data-aos-delay="400">
+                        {% if not current_user.is_authenticated %}
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg mb-3 mb-sm-0 me-sm-3 glow-btn">
+                                <i class="bi bi-person-plus me-2"></i>Get Started
+                            </a>
+                            <a href="#vacancies" class="btn btn-outline-light btn-lg scroll-link">
+                                <i class="bi bi-arrow-down me-2"></i>Browse Jobs
+                            </a>
+                        {% else %}
+                            <a href="#vacancies" class="btn btn-primary btn-lg mb-3 mb-sm-0 me-sm-3 glow-btn scroll-link">
+                                <i class="bi bi-search me-2"></i>Find Opportunities
+                            </a>
+                            {% if current_user.role == UserRole.APPLICANT %}
+                                <a href="{{ url_for('applicant.dashboard') }}" class="btn btn-outline-light btn-lg">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                </a>
+                            {% elif current_user.role == UserRole.HR %}
+                                <a href="{{ url_for('hr.dashboard') }}" class="btn btn-outline-light btn-lg">
+                                    <i class="bi bi-briefcase me-2"></i>HR Dashboard
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left" data-aos-delay="600">
+                <div class="hero-visual">
+                    <div class="stats-cards">
+                        <div class="stat-card" data-aos="zoom-in" data-aos-delay="800">
+                            <div class="stat-icon">
+                                <i class="bi bi-briefcase-fill"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 class="stat-number">{{ vacancies|length }}+</h3>
+                                <p class="stat-label">Active Jobs</p>
                             </div>
                         </div>
-                        <div class="card-footer text-muted">
-                            Posted: {{ vacancy.created_at.strftime('%Y-%m-%d') }}
+                        <div class="stat-card" data-aos="zoom-in" data-aos-delay="1000">
+                            <div class="stat-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 class="stat-number">500+</h3>
+                                <p class="stat-label">Happy Candidates</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" data-aos="zoom-in" data-aos-delay="1200">
+                            <div class="stat-icon">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 class="stat-number">95%</h3>
+                                <p class="stat-label">Success Rate</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
         </div>
-    {% else %}
-        <div class="alert alert-light" role="alert"> {# Changed to alert-light for better contrast #}
-            There are currently no open vacancies. Please check back later!
-        </div>
-    {% endif %}
+    </div>
 </div>
+
+{# Display flashed messages #}
+<div class="container">
+    {% include '_flashes.html' %}
+</div>{# Vacancies Section #}
+<section id="vacancies" class="vacancies-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="section-title">
+                <span class="gradient-text">Current Openings</span>
+            </h2>
+            <p class="section-subtitle">Discover your next career opportunity</p>
+        </div>
+
+        {% if vacancies %}
+            <div class="row g-4" data-aos="fade-up" data-aos-delay="200">
+                {% for vacancy in vacancies %}
+                    <div class="col-lg-4 col-md-6">
+                        <div class="vacancy-card h-100">
+                            <div class="vacancy-card-inner">
+                                <div class="vacancy-header">
+                                    <div class="vacancy-icon">
+                                        <i class="bi bi-briefcase-fill"></i>
+                                    </div>
+                                    <div class="vacancy-meta">
+                                        <span class="vacancy-date">{{ vacancy.created_at.strftime('%b %d, %Y') }}</span>
+                                    </div>
+                                </div>
+                                <div class="vacancy-body">
+                                    <h5 class="vacancy-title">{{ vacancy.title }}</h5>
+                                    <p class="vacancy-description">
+                                        {{ (vacancy.description[:120] + '...') if vacancy.description and vacancy.description|length > 120 else (vacancy.description or 'No description available.') }}
+                                    </p>
+                                </div>
+                                <div class="vacancy-footer">
+                                    {% if current_user.is_authenticated and current_user.role == UserRole.APPLICANT %}
+                                        {# Check if user already applied #}
+                                        {% set has_applied = false %}
+                                        {% for app in current_user.applications if app.vacancy_id == vacancy.id %}
+                                            {% set has_applied = true %}
+                                        {% endfor %}
+
+                                        {% if has_applied %}
+                                            <button class="btn btn-applied disabled w-100">
+                                                <i class="bi bi-check-circle me-2"></i>Already Applied
+                                            </button>
+                                        {% else %}
+                                            {# Check if user has uploaded any CVs #}
+                                            {% if current_user.cv_files.first() %}
+                                                <form method="POST" action="{{ url_for('applicant.apply_for_vacancy', vacancy_id=vacancy.id) }}" class="apply-form w-100">
+                                                    <button type="submit" class="btn btn-primary w-100 apply-button">
+                                                        <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                                                        <i class="bi bi-send me-2 button-icon"></i>
+                                                        <span class="button-text">Apply Now</span>
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <a href="{{ url_for('applicant.dashboard') }}" class="btn btn-warning w-100" title="Upload a CV first">
+                                                    <i class="bi bi-cloud-upload me-2"></i>Upload CV to Apply
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% elif not current_user.is_authenticated %}
+                                        <a href="{{ url_for('auth.login', next=url_for('index')) }}" class="btn btn-primary w-100">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Apply
+                                        </a>
+                                    {% else %} {# HR User #}
+                                        <a href="{{ url_for('hr.view_applicants', vacancy_id=vacancy.id) }}" class="btn btn-outline-secondary w-100">
+                                            <i class="bi bi-people me-2"></i>View Applicants
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state text-center" data-aos="fade-up">
+                <div class="empty-icon mb-4">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3 class="empty-title">No Openings Available</h3>
+                <p class="empty-subtitle">Check back soon for new opportunities!</p>
+                {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg glow-btn">
+                        <i class="bi bi-bell me-2"></i>Get Notified
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{# Features Section #}
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="features-content">
+                    <h2 class="features-title mb-4">
+                        Why Choose <span class="gradient-text">IRIS</span>?
+                    </h2>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>AI-Powered Matching</h5>
+                                <p>Our intelligent system analyzes your CV and matches you with the perfect opportunities.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Instant Feedback</h5>
+                                <p>Get immediate insights on your application strength and improvement suggestions.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h5>Transparent Process</h5>
+                                <p>Clear scoring system and feedback ensure you know exactly where you stand.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+                <div class="features-visual">
+                    <div class="pulse-circle">
+                        <div class="pulse-inner">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
 
 {% block scripts %}
-{{ super() }} {# Include scripts from base template if any #}
+{{ super() }}
 
-{# Removed Spline Initialization Script #}
+{# AOS (Animate On Scroll) Library #}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AOS
+    AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true,
+        offset: 100
+    });
+
+    // Apply form handling
     const applyForms = document.querySelectorAll('.apply-form');
-    const loadingOverlay = document.getElementById('loading-overlay'); // Get overlay element
+    const loadingOverlay = document.getElementById('loading-overlay');
 
     applyForms.forEach(form => {
         form.addEventListener('submit', function(event) {
-            // Show the full-page overlay
             if (loadingOverlay) {
                 loadingOverlay.classList.remove('d-none');
             }
 
-            // Optionally disable the button still, though overlay covers it
             const button = form.querySelector('.apply-button');
-            if (button) button.disabled = true;
-
-            // Note: The overlay will remain visible until the page reloads after redirect.
-            // For SPAs or AJAX, you'd hide the overlay on response.
-            // might involve AJAX, but this provides basic visual feedback.
+            if (button) {
+                button.disabled = true;
+                const spinner = button.querySelector('.spinner-border');
+                const icon = button.querySelector('.button-icon');
+                if (spinner) spinner.classList.remove('d-none');
+                if (icon) icon.classList.add('d-none');
+            }
         });
     });
+
+    // Smooth scrolling for anchor links
+    const scrollLinks = document.querySelectorAll('.scroll-link');
+    scrollLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Animated counter for stats
+    const animateCounters = () => {
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+            const target = parseInt(counter.innerText.replace(/\+|%/g, ''));
+            const suffix = counter.innerText.includes('+') ? '+' : counter.innerText.includes('%') ? '%' : '';
+            let current = 0;
+            const increment = target / 50;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.innerText = Math.ceil(current) + suffix;
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    counter.innerText = target + suffix;
+                }
+            };
+            
+            // Start animation when element is visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        updateCounter();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            observer.observe(counter);
+        });
+    };
+
+    animateCounters();
+
+    // Floating shapes animation
+    const shapes = document.querySelectorAll('.shape');
+    shapes.forEach((shape, index) => {
+        shape.style.animationDelay = `${index * 0.5}s`;
+    });
+
+    // Add parallax effect to hero section
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            const rate = scrolled * -0.5;
+            heroSection.style.transform = `translateY(${rate}px)`;
+        }
+    });    // Initialize flip animation
+    const flipContainer = document.getElementById('flip');
+    if (flipContainer) {
+        // Ensure animation starts properly on page load
+        const firstChild = flipContainer.querySelector('div:first-child');
+        if (firstChild) {
+            firstChild.style.animationPlayState = 'running';
+        }
+    }
 });
 </script>
 {% endblock %}
