@@ -17,7 +17,9 @@
     --transition-medium: all 0.3s ease-in-out;
     --transition-slow: all 0.5s ease-in-out;
 }
-
+h5 {
+    color: #000000;
+}
 /* Base Styles */
 body {
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
